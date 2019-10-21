@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+    <head>
+        <!--
+        Customize this policy to fit your own app's needs. For more guidance, see:
+            https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
+        Some notes:
+            * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+            * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+            * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+                * Enable inline JS: add 'unsafe-inline' to default-src
+        -->
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta http-equiv="Content-Security-Policy" script-src='unsafe-inline';>
+        <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+        <link rel="stylesheet" type="text/css" href="css/index.css">
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+       
+        <title>Hello World</title>
+    </head>
+    <body class="bg-primary">
+        
+     
+        <div class="container-fluid">
+            <div class="row"> 
+                <div class="col-md-12 p-5 text-white text-center">
+                    <h1 class="text-white">BMI Calculator</h1>
+
+                    <input type="text" id="mass" placeholder="Mass in Kilograms" class="form-control my-2"/>
+                    <input type="text" id="height" placeholder="Height in meters" class="form-control my-2"/>
+                    <button onclick="onCalculate()" class="btn btn-light btn-block" id="calculate">Calculate</button>
+                </div>
+                
+            </div>
+            <div class="row m-2" id="result">
+                    <div class="col-md-12 bg-light p-3" style="border-radius: 5px;">
+                        <label for="sort">Sort By Weight Status: </label>
+                        <select id="sort" onchange="sort()">
+                            <option disabled="disabled" selected="selected">--Sort By--</option>
+                            <option value="0">Underweight</option>
+                            <option value="1">Normal</option>
+                            <option value="2">Overweight</option>
+                            <option value="3">Obese</option>
+                        </select>
+                        <ul id="result-ul"></ul>
+                    </div>
+                </div>
+        </div>
+        <!--
+        <div class="app">
+            <h1>Apache Cordova</h1>
+            <div id="deviceready" class="blink">
+                <p class="event listening">Connecting to Device</p>
+                <p class="event received">Device is Ready</p>
+            </div>
+        </div>
+        -->
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/jquery.min.js"></script>
+        <script>
+            $("#result").hide();
+            var arrayForStatus = ["Underweight","Normal","Overweight","Obese"];
+            var arrayForMessages = ["You should eat a little bit more","Keep doing what you are doing","You should cut down on your food a little bit","You should really do something about your appetite ASAP"];
+
+            var results = []
+            var result = document.getElementById("result");
+            result.style.display = "none";
+            function onCalculate()
+            {
+                var mass = $("#mass").val(); //in kg
+                var height = $("#height").val(); //in m
+                var mass = parseFloat(mass);
+                var height = parseFloat(height);
+                
+                 if(isNaN(mass) || isNaN(height))
+                {
+                    navigator.notification.alert("Any Of The Values are not Correct");
+                }
+                
+                else
+                {
+                    $("#result").slideDown();
+                    bmi = mass / (height * height);
+                    bmi =  Math.round( bmi * 10 ) / 10; //https://stackoverflow.com/questions/7342957/how-do-you-round-to-1-decimal-place-in-javascript
+
+                    var date = new Date();
+                    date = formatDate(date);
+                    result = {
+                        mass:mass,
+                        height:height,
+                        bmi:bmi,
+                        date:date
+                    }
+                    results.push(result);
+                    console.log(results);
+                    
+                    printAll(results);
+                
+                    
+                    
+                    
+                }
+            }
+            function strObject(object)
+            {
+                console.log(object);
+                return "Date: "+object.date+" BMI: "+object.bmi+" Mass: "+object.mass+" Height: "+object.height
+            }
+            function printAll(results)
+            {
+                $("#result-ul").html("");
+                console.log("hello");
+                for(var i =0; i<results.length;i++)
+                {
+                    //$("#result-ul").append(strObject(results[i]));
+                
+                if(results[i].bmi<18.5)
+                    {
+
+                        //$("#result-ul").append(strObject(result));
+                        $("#result-ul").append("<li>BMI: "+results[i].bmi+", Status: "+arrayForStatus[0]+", Message: "+arrayForMessages[0]+" Dated: "+results[i].date+"</li>");
+
+                    }
+                    else if(results[i].bmi>=18.5 && bmi<=24.9)
+                    {
+                        $("#result-ul").append("<li>BMI: "+results[i].bmi+", Status: "+arrayForStatus[1]+", Message: "+arrayForMessages[1]+" Dated: "+results[i].date+"</li>");
+
+                    }
+                    else if(results[i].bmi>=25 && bmi<=29.9)
+                    {
+                        $("#result-ul").append("<li>BMI: "+results[i].bmi+", Status: "+arrayForStatus[2]+", Message: "+arrayForMessages[2]+" Dated: "+results[i].date+"</li>");
+
+                    }
+                    else if(results[i].bmi>=30)
+                    {
+                        $("#result-ul").append("<li>BMI: "+results[i].bmi+", Status: "+arrayForStatus[3]+", Message: "+arrayForMessages[3]+" Dated: "+results[i].date+"</li>");
+
+                    }
+                }
+
+            }
+            function printResults(results)
+            {
+                $("#result-ul").html("");
+                console.log("hello");
+                for(var i =0; i<results.length;i++)
+                {
+                    $("#result-ul").append("<li> "+strObject(results[i])+" Status: "+getStatus(results[i].bmi)+" Message: "+getMessage(results[i].bmi)+"</li>");
+                }
+            }
+
+            function sort()
+            {
+                
+                var selectedValue = $("#sort").val();
+                //console.log(selectedValue);
+                console.log(results);
+                ds = sortByWeightStatus(arrayForStatus[selectedValue]);
+                console.log("inside sort functions");
+                console.log(ds);
+                printResults(ds);
+            }
+            function sortByWeightStatus(weightStatus )
+            {
+                var newResults = [];
+                for(var i=0;i<results.length;i++)
+                {
+                    if(getStatus(results[i].bmi) == weightStatus)
+                    {
+                        newResults.push(results[i]);
+                    }
+                }
+                return newResults;
+            }
+
+            function getStatus(bmi)
+            {
+                if(bmi<18.5)
+                    {
+                        return arrayForStatus[0];
+                        //$("#result-ul").append("<li>BMI: "+bmi+", Status: "+arrayForStatus[0]+", Message: "+arrayForMessages[0]+" Dated: "+date+"</li>");
+                    }
+                    else if(bmi>=18.5 && bmi<=24.9)
+                    {
+                        return arrayForStatus[1];
+
+                        //$("#result-ul").append("<li>BMI: "+bmi+", Status: "+arrayForStatus[1]+", Message: "+arrayForMessages[1]+" Dated: "+date+"</li>");
+
+                    }
+                    else if(bmi>=25 && bmi<=29.9)
+                    {
+                        return arrayForStatus[2];
+
+                        //$("#result-ul").append("<li>BMI: "+bmi+", Status: "+arrayForStatus[2]+", Message: "+arrayForMessages[2]+" Dated: "+date+"</li>");
+
+                    }
+                    else if(bmi>=30)
+                    {
+                        return arrayForStatus[3];
+
+                        //$("#result-ul").append("<li>BMI: "+bmi+", Status: "+arrayForStatus[3]+", Message: "+arrayForMessages[3]+" Dated: "+date+"</li>");
+
+                    }
+            }
+
+
+
+
+            function getMessage(bmi)
+            {
+                if(bmi<18.5)
+                    {
+                        return arrayForMessages[0];
+                        //$("#result-ul").append("<li>BMI: "+bmi+", Status: "+arrayForStatus[0]+", Message: "+arrayForMessages[0]+" Dated: "+date+"</li>");
+                    }
+                    else if(bmi>=18.5 && bmi<=24.9)
+                    {
+                        return arrayForMessages[1];
+
+                        //$("#result-ul").append("<li>BMI: "+bmi+", Status: "+arrayForStatus[1]+", Message: "+arrayForMessages[1]+" Dated: "+date+"</li>");
+
+                    }
+                    else if(bmi>=25 && bmi<=29.9)
+                    {
+                        return arrayForMessages[2];
+
+                        //$("#result-ul").append("<li>BMI: "+bmi+", Status: "+arrayForStatus[2]+", Message: "+arrayForMessages[2]+" Dated: "+date+"</li>");
+
+                    }
+                    else if(bmi>=30)
+                    {
+                        return arrayForMessages[3];
+
+                        //$("#result-ul").append("<li>BMI: "+bmi+", Status: "+arrayForStatus[3]+", Message: "+arrayForMessages[3]+" Dated: "+date+"</li>");
+
+                    }
+            }
+            
+            function formatDate(date)
+            {
+                // DD - MM - YYYY
+                var result = date.getDate() + "-" + (date.getMonth() + 1) + "-"+ date.getFullYear()+" "+(date.getHours())+":"+date.getMinutes()+":"+date.getSeconds();
+                return result;
+            }
+        </script>
+    </body>
+</html>
