@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:View xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark"
+		viewActivate="vcHandler(event)"
+		>
+	
+	<fx:Script>
+		<![CDATA[
+			var str = "";
+			import flash.events.*;
+			
+			import mx.collections.*;
+			import mx.controls.*;
+			import mx.utils.*;
+			
+			import spark.components.*;
+			import spark.events.*;
+		
+			var isAsec = true;
+			protected function sortAsec(array:Array):Array
+			{
+		
+				for(var i=0;i<array.length-1;i++)
+				{
+					for(var j=0;j<array.length-i-1;j++)
+					{
+						if(ObjectUtil.compare(array[j]['text'],array[j+1]['text'])>0)
+						{
+							var temp = array[j]['text'];
+							array[j]['text'] = array[j+1]['text'];
+							array[j+1]['text'] = temp;
+						}
+					}
+				}
+				return array;	
+			}
+			protected function sortDesc(array:Array):Array
+			{
+
+				for(var i=0;i<array.length-1;i++)
+				{
+					for(var j=0;j<array.length-i-1;j++)
+					{
+						if(ObjectUtil.compare(array[j]['text'],array[j+1]['text'])<0)
+						{
+							var temp = array[j]['text'];
+							array[j]['text'] = array[j+1]['text'];
+							array[j+1]['text'] = temp;
+						}
+					}
+				}
+				return array;	
+			}
+			protected function vcHandler(event)
+			{
+				
+				
+				var countries = data as Array;
+
+				var ctrs = null;//countriesLbl as Label;
+				
+				var dataGrid = datagrid as DataGrid;
+	
+				
+			 // countriesList = new ArrayList(sortAsec(countries));
+				
+			  	
+			  
+				dataGrid.dataProvider = new ArrayList(sortAsec(countries));
+		
+			
+				
+			}
+		
+			protected function alertClick(event:MouseEvent):void
+			{
+				var countries = data as Array;
+				var dataGrid = datagrid as DataGrid;
+				var data=sortDesc(countries);;
+			
+				
+				/*var txtC:Label = newtext as Label;
+				for(var i=0;i<data.length;i++)
+				{
+					txtC.text= txtC.text+ data['name'] + "\n";
+				}*/
+				trace("POPOUP");
+				new AlertMsg().open(this,true);
+				
+				
+			}
+			private function onAlertClose(event:PopUpEvent):void {
+			
+			}
+			protected function aescClick(event:MouseEvent):void
+			{
+				var countries = data as Array;
+				var dataGrid = datagrid as DataGrid;
+				dataGrid.dataProvider = new ArrayList(sortAsec(countries));
+				isAsec = true;
+			}
+			protected function descClick(event:MouseEvent):void
+			{
+				var countries = data as Array;
+				var dataGrid = datagrid as DataGrid;
+				dataGrid.dataProvider = new ArrayList(sortDesc(countries));	
+				isAsec = false;
+			}
+			protected function idk(event:GridEvent):void
+			{
+				trace(event.rowIndex);
+				var countries = data as Array;
+				countries.splice(event.rowIndex,1);
+				//delete countries[event.rowIndex];
+				
+				data = countries;
+				var dataGrid = datagrid as DataGrid;
+				if(isAsec)
+				{
+					dataGrid.dataProvider = new ArrayList(sortAsec(countries));
+				}
+				else
+				{
+					dataGrid.dataProvider = new ArrayList(sortDesc(countries));
+				
+				}
+				
+				
+			}
+			
+			
+		]]>
+		
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		
+		<fx:Component className="AlertMsg">
+			<s:SkinnablePopUpContainer x="70" y="300">
+				<s:TitleWindow title="Countries" close="close()">
+					<s:VGroup horizontalAlign="center" paddingTop="8" paddingBottom="8" paddingLeft="8" paddingRight="8" gap="5" width="100%">
+						<s:Label text="Countries Will Appear Here" />
+				
+						
+						
+						<s:Button label="OK" click="close()"/>
+					</s:VGroup>
+				</s:TitleWindow>
+			</s:SkinnablePopUpContainer>
+		</fx:Component>
+	</fx:Declarations>
+	<s:DataGrid id="datagrid" x="10" y="92" width="300" gridClick="idk(event)" >
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn dataField="text" headerText="Countries">
+					
+				</s:GridColumn>
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
+		
+	
+	
+	<s:Label x="9" y="68" color="#FF0000" text="Entered Countries:&#xd;"/>
+	<s:Button id="asec" x="36" y="11" click="aescClick(event)" label="ASEC"/>
+	<s:Button id="desc" x="121" y="11" click="descClick(event)" label="DESC"/>
+	<s:Button id="alert" x="212" y="11" click="alertClick(event)" label="ALERT"/>
+	<s:Label x="205" y="69" text="Click To Delete&#xd;"/>
+
+</s:View>

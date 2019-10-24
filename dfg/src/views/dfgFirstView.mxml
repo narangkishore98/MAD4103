@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:View xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.*;
+			import mx.events.*;
+			import mx.events.FlexEvent;
+			
+			var countries:Array = [];
+			protected function addCountry(event:MouseEvent):void
+			{
+				var txtBox:TextInput = txtCountryName as TextInput;
+				var errorMessage:Label = errorMessage as Label;
+				if(countries.length!=4)
+				{
+					if(txtBox.text == "")
+					{
+						errorMessage.text  = "Cannot Be Empty";
+					}
+					else
+					{
+						var obj:Object = new Object();
+						obj['text'] = txtBox.text;
+						countries.push(obj);
+						txtBox.text = "";
+						txtBox.prompt = "Last Country Added: "+countries[countries.length-1]['text'];
+						txtBox.focusEnabled = true;
+						errorMessage.text  = "";
+			
+					}
+				}
+				else
+				{
+					if(txtBox.text == "")
+					{
+						errorMessage.text  = "Cannot Be Empty";
+					}
+					else
+					{
+						
+						var obj:Object = new Object();
+						obj['text'] = txtBox.text;
+						countries.push(obj);
+						txtBox.text = "";
+						txtBox.prompt = "Last Country Added: "+countries[countries.length-1];
+						txtBox.focusEnabled = true;
+						errorMessage.text  = "";
+		
+						txtBox.enabled = false;
+						navigator.pushView(SecondScreen, countries);
+					}
+					
+					
+					
+				}
+			}
+		]]>
+	</fx:Script>
+	<s:Label x="99" y="53" color="#AD0000" fontFamily="_typewriter" fontSize="20"
+			 text="Lab Test 2&#xd;"/>
+	<s:Label x="35" y="123" text="Enter Country Name: &#xd;"/>
+	<s:TextInput id="txtCountryName" x="32" y="146" width="254" prompt="e.g. Canada"/>
+	<s:Button x="170" y="187" label="Add Country" click="addCountry(event)" id="btnAddCountry"/>
+	<s:Button x="130" y="238" label="Display Countries"/>
+	<s:Label id="errorMessage" x="140" y="332" verticalAlign="top"/>
+</s:View>
