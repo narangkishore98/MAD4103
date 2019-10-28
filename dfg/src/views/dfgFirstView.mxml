@@ -65,6 +65,5 @@
 	<s:Label x="35" y="123" text="Enter Country Name: &#xd;"/>
 	<s:TextInput id="txtCountryName" x="32" y="146" width="254" prompt="e.g. Canada"/>
 	<s:Button x="170" y="187" label="Add Country" click="addCountry(event)" id="btnAddCountry"/>
-	<s:Button x="130" y="238" label="Display Countries"/>
 	<s:Label id="errorMessage" x="140" y="332" verticalAlign="top"/>
 </s:View>
